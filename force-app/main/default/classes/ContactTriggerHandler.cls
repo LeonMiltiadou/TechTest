@@ -23,9 +23,7 @@ public class ContactTriggerHandler extends TriggerHandler {
             }
             caseList.add(c);
         }
-
-        if (Schema.sObjectType.Contact.isUpdateable()) {
+            //Validate CRUD permission before this DML operation, how?
             insert caseList; 
-        }
       }
 }

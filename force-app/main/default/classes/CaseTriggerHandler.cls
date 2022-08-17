@@ -40,8 +40,8 @@ public class CaseTriggerHandler  extends TriggerHandler{
             taskList.add(t);
         }
 
-        if (Schema.sObjectType.Task.isUpdateable()) {
-            insert taskList; 
-        }
+        //Validate CRUD permission before this DML operation, how?
+        insert taskList; 
+        
     }
 }
