@@ -24,7 +24,6 @@ public class ContactTriggerHandler extends TriggerHandler {
             caseList.add(c);
         }
 
-        //fix this 
         if (Schema.sObjectType.Contact.isUpdateable()) {
             insert caseList; 
         }

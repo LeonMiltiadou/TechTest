@@ -3,16 +3,22 @@ public class CaseTriggerHandler  extends TriggerHandler{
     public override void afterInsert() {
         List<Task> taskList = new List <Task>();
     
-        for(Case c : (List<Case>) Trigger.new){
+        Map<Id,Case> caseMap = (Map<Id,Case>) Trigger.newMap;
+        //Get all contacts associates with cases;
+        
+        //Is there a better way of getting the associated contact then running a SOQL to update the list?
+        Map<Id,Case> caseMapUpdated = new Map<Id,Case>([SELECT Id, Contact.OwnerId FROM Case WHERE id IN :caseMap.values()]);
+
+        for(Case c : caseMap.values()){
     
             Task t = new Task(WhatId=c.Id ,Status='Not Started', Subject='Welcome call for ' + c.CaseNumber,Priority='Normal');
 
             //only if contact is associated with the case otherwise associate with case owner
-            Id Contact = c.Contact.OwnerId;
+            Contact associatedContact = caseMapUpdated.get(c.id).Contact;
 
-            if(c.Contact != null)
+            if(associatedContact != null)
             {
-                t.OwnerId=c.Contact.OwnerId;
+                t.OwnerId=associatedContact.OwnerId;
             }else
             {
                 t.OwnerId=c.OwnerId;
@@ -34,9 +40,8 @@ public class CaseTriggerHandler  extends TriggerHandler{
             taskList.add(t);
         }
 
-        //fix this 
         if (Schema.sObjectType.Task.isUpdateable()) {
             insert taskList; 
         }
-      }
+    }
 }

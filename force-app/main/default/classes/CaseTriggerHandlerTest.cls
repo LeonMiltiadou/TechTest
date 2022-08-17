@@ -20,7 +20,7 @@ private class CaseTriggerHandlerTest {
     }
 
     @isTest
-    static void taskCreatedAfterCaseInsertAndDueDateSetBasedOffCasePriority() {
+    static void taskCreatedAfterCaseInsertDueDateSetBasedOffCasePriority() {
         List<Case> caseList = new List<Case>();
 
         Case c_Priority_High = new Case(Priority='High');
@@ -33,17 +33,17 @@ private class CaseTriggerHandlerTest {
 
         insert caseList; 
 
-        c_Priority_High = [SELECT CaseNumber From Case WHERE id = :c_Priority_High.id].get(0);
-        c_Priority_Medium = [SELECT CaseNumber From Case WHERE id = :c_Priority_Medium.id].get(0);
-        c_Priority_Low = [SELECT CaseNumber From Case WHERE id = :c_Priority_Low.id].get(0);
+        c_Priority_High = [SELECT id From Case WHERE id = :c_Priority_High.id].get(0);
+        c_Priority_Medium = [SELECT id From Case WHERE id = :c_Priority_Medium.id].get(0);
+        c_Priority_Low = [SELECT id From Case WHERE id = :c_Priority_Low.id].get(0);
 
-        Task task_RelatedTo_c_Priority_High = [SELECT id, Status, Subject, Priority, ActivityDate FROM Task WHERE WhatId = :c_Priority_High.Id].get(0);
-        Task task_RelatedTo_c_Priority_Medium = [SELECT id, Status, Subject, Priority, ActivityDate FROM Task WHERE WhatId = :c_Priority_Medium.Id].get(0);
-        Task task_RelatedTo_c_Priority_Low = [SELECT id, Status, Subject, Priority, ActivityDate FROM Task WHERE WhatId = :c_Priority_Low.Id].get(0);
+        Task task_RelatedTo_c_Priority_High = [SELECT ActivityDate FROM Task WHERE WhatId = :c_Priority_High.Id].get(0);
+        Task task_RelatedTo_c_Priority_Medium = [SELECT ActivityDate FROM Task WHERE WhatId = :c_Priority_Medium.Id].get(0);
+        Task task_RelatedTo_c_Priority_Low = [SELECT ActivityDate FROM Task WHERE WhatId = :c_Priority_Low.Id].get(0);
 
-        System.assertEquals(Date.today().addDays(7), task_RelatedTo_c_Priority_High.ActivityDate, 'task status is "Not Started"');
-        System.assertEquals(Date.today().addDays(14), task_RelatedTo_c_Priority_Medium.ActivityDate, 'task status is "Not Started"');
-        System.assertEquals(Date.today().addDays(21), task_RelatedTo_c_Priority_Low.ActivityDate, 'task status is "Not Started"');
+        System.assertEquals(Date.today().addDays(7), task_RelatedTo_c_Priority_High.ActivityDate, 'task due date is in 1 week');
+        System.assertEquals(Date.today().addDays(14), task_RelatedTo_c_Priority_Medium.ActivityDate, 'task due date is in 2 weeks');
+        System.assertEquals(Date.today().addDays(21), task_RelatedTo_c_Priority_Low.ActivityDate, 'task due date is in 3 weeks');
     }
 
     @isTest
